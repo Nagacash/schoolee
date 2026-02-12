@@ -1,21 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { LehrerOnly } from "@/components/lehrer-only";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  getTeacherClasses,
-  setTeacherClasses,
-  saveTeacherClass,
-  deleteTeacherClass,
+  useClassesStore,
   encodeSharedPayload,
   type TeacherClass,
 } from "@/lib/classes";
-import { Plus, Trash2, Copy, Link2, ArrowLeft, BookOpen } from "lucide-react";
+import { Plus, Trash2, Link2, ArrowLeft, BookOpen } from "lucide-react";
 
 const TONE_OPTIONS: { value: TeacherClass["tone"]; label: string }[] = [
   { value: "freundlich", label: "Freundlich" },
@@ -24,20 +21,11 @@ const TONE_OPTIONS: { value: TeacherClass["tone"]; label: string }[] = [
 ];
 
 export default function LehrerKlassenPage() {
-  const [classes, setClasses] = useState<TeacherClass[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const classes = useClassesStore((s) => s.teacherClasses);
+  const setClasses = useClassesStore((s) => s.setTeacherClasses);
   const [editing, setEditing] = useState<TeacherClass | null>(null);
   const [newTopic, setNewTopic] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setClasses(getTeacherClasses());
-    setLoaded(true);
-  }, []);
-
-  useEffect(() => {
-    if (loaded) setTeacherClasses(classes);
-  }, [classes, loaded]);
 
   function addClass() {
     const id = crypto.randomUUID();
@@ -57,7 +45,6 @@ export default function LehrerKlassenPage() {
       ? classes.map((c) => (c.id === next.id ? next : c))
       : [...classes, next];
     setClasses(list);
-    setTeacherClasses(list);
     setEditing(null);
     setNewTopic("");
   }
@@ -82,7 +69,11 @@ export default function LehrerKlassenPage() {
       tone: cls.tone,
     };
     const data = encodeSharedPayload(payload);
-    const url = `${typeof window !== "undefined" ? window.location.origin : ""}/lernen?data=${data}`;
+    const base =
+      process.env.NEXT_PUBLIC_APP_URL ??
+      (typeof window !== "undefined" ? window.location.origin : "");
+    const origin = base?.replace(/\/$/, "") || "";
+    const url = `${origin}/lernen?data=${data}`;
     navigator.clipboard.writeText(url);
     setCopiedId(cls.id);
     setTimeout(() => setCopiedId(null), 2000);
@@ -221,9 +212,8 @@ export default function LehrerKlassenPage() {
                       variant="ghost"
                       size="icon"
                       onClick={() => {
-                      deleteTeacherClass(cls.id);
-                      setClasses(getTeacherClasses());
-                    }}
+                        setClasses(classes.filter((c) => c.id !== cls.id));
+                      }}
                       className="rounded-lg text-destructive hover:text-destructive"
                       aria-label="Klasse löschen"
                     >

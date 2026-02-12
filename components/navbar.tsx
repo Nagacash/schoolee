@@ -18,6 +18,7 @@ import {
   BookMarked,
   Menu,
   X,
+  FileText,
 } from "lucide-react";
 
 export function Navbar() {
@@ -36,10 +37,8 @@ export function Navbar() {
   const isSchueler = user?.role === "schüler";
 
   return (
-    <nav className="no-print sticky top-0 z-50 w-full px-4 pt-4">
-      <div className="mx-auto max-w-7xl rounded-2xl bg-card/70 backdrop-blur-2xl border border-white/10 dark:border-white/5 shadow-lg">
-        {/* Top row */}
-        <div className="flex h-16 items-center justify-between px-4 sm:px-6">
+    <nav className="no-print sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <Link
             href="/"
             className="group flex items-center gap-2.5 transition-all duration-200 hover:opacity-90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-xl cursor-pointer"
@@ -62,7 +61,7 @@ export function Navbar() {
                   ) : (
                     <UserRound className="h-4 w-4 text-primary" />
                   )}
-                  <span className="font-medium text-foreground max-w-[10rem] truncate">
+                  <span className="font-medium text-foreground max-w-40 truncate">
                     {user.name}
                   </span>
                   <span className="text-xs">
@@ -83,10 +82,17 @@ export function Navbar() {
             {isLehrer && (
               <>
                 <Link
-                  href="/lehrer/klassen"
+                  href="/lehrer/overview"
                   className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
                 >
                   <Users className="h-4 w-4" />
+                  Übersicht
+                </Link>
+                <Link
+                  href="/lehrer/klassen"
+                  className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
+                >
+                  <BookOpen className="h-4 w-4" />
                   Meine Klassen
                 </Link>
                 <Link
@@ -103,16 +109,32 @@ export function Navbar() {
                   <BarChart3 className="h-4 w-4" />
                   Insights
                 </Link>
+                <Link
+                  href="/lehrer/elternbrief"
+                  className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
+                >
+                  <FileText className="h-4 w-4" />
+                  Admin Autopilot
+                </Link>
               </>
             )}
             {isSchueler && (
-              <Link
-                href="/lernen"
-                className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
-              >
-                <BookMarked className="h-4 w-4" />
-                Lernen
-              </Link>
+              <>
+                <Link
+                  href="/neu-in-deutschland"
+                  className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
+                >
+                  <Users className="h-4 w-4" />
+                  Neu in Deutschland
+                </Link>
+                <Link
+                  href="/lernen"
+                  className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
+                >
+                  <BookMarked className="h-4 w-4" />
+                  Lernen
+                </Link>
+              </>
             )}
             <Link
               href="/magic-chat"
@@ -136,11 +158,9 @@ export function Navbar() {
               {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
-        </div>
-
         {/* Mobile menu */}
         {open && (
-          <div className="sm:hidden border-t border-border/60 px-4 pb-4 pt-3 space-y-3">
+          <div className="sm:hidden absolute inset-x-0 top-full z-30 border-b border-border/60 bg-background/95 backdrop-blur-xl px-4 pb-4 pt-3 space-y-3">
             {!isLoading && user && (
               <div className="flex items-center justify-between gap-3 rounded-xl bg-muted/40 px-3 py-2">
                 <div className="flex items-center gap-2 text-sm">
@@ -149,7 +169,7 @@ export function Navbar() {
                   ) : (
                     <UserRound className="h-4 w-4 text-primary" />
                   )}
-                  <span className="font-medium text-foreground truncate max-w-[9rem]">
+                  <span className="font-medium text-foreground truncate max-w-36">
                     {user.name}
                   </span>
                   <span className="text-[11px] text-muted-foreground">
@@ -169,11 +189,19 @@ export function Navbar() {
             {isLehrer && (
               <>
                 <Link
-                  href="/lehrer/klassen"
+                  href="/lehrer/overview"
                   onClick={() => setOpen(false)}
                   className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors"
                 >
                   <Users className="h-4 w-4" />
+                  Übersicht
+                </Link>
+                <Link
+                  href="/lehrer/klassen"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors"
+                >
+                  <BookOpen className="h-4 w-4" />
                   Meine Klassen
                 </Link>
                 <Link
@@ -192,17 +220,35 @@ export function Navbar() {
                   <BarChart3 className="h-4 w-4" />
                   Insights
                 </Link>
+                <Link
+                  href="/lehrer/elternbrief"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors"
+                >
+                  <FileText className="h-4 w-4" />
+                  Admin Autopilot
+                </Link>
               </>
             )}
             {isSchueler && (
-              <Link
-                href="/lernen"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors"
-              >
-                <BookMarked className="h-4 w-4" />
-                Lernen
-              </Link>
+              <>
+                <Link
+                  href="/neu-in-deutschland"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors"
+                >
+                  <Users className="h-4 w-4" />
+                  Neu in Deutschland
+                </Link>
+                <Link
+                  href="/lernen"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/8 transition-colors"
+                >
+                  <BookMarked className="h-4 w-4" />
+                  Lernen
+                </Link>
+              </>
             )}
             <Link
               href="/magic-chat"

@@ -1,15 +1,8 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
-
-const STORAGE_KEY = "paddy-auth";
+import type { ReactNode } from "react";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type Role = "lehrer" | "schüler";
 
@@ -18,68 +11,51 @@ export interface AuthUser {
   name: string;
 }
 
-interface AuthContextValue {
+interface AuthState {
   user: AuthUser | null;
-  isLoading: boolean;
+  hasHydrated: boolean;
   login: (role: Role, name: string) => void;
   logout: () => void;
+  setHasHydrated: (v: boolean) => void;
 }
 
-const AuthContext = createContext<AuthContextValue | null>(null);
-
-function loadStored(): AuthUser | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const data = JSON.parse(raw) as AuthUser;
-    if (data?.role !== "lehrer" && data?.role !== "schüler") return null;
-    if (!data?.name?.trim()) return null;
-    return { role: data.role, name: data.name.trim() };
-  } catch {
-    return null;
-  }
-}
+const useAuthStoreInternal = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      hasHydrated: false,
+      login: (role, name) => {
+        const trimmed = name.trim();
+        if (!trimmed) return;
+        set({ user: { role, name: trimmed } });
+      },
+      logout: () => set({ user: null }),
+      setHasHydrated: (v) => set({ hasHydrated: v }),
+    }),
+    {
+      name: "naggy-auth",
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
+    }
+  )
+);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setUser(loadStored());
-    setIsLoading(false);
-  }, []);
-
-  const login = useCallback((role: Role, name: string) => {
-    const trimmed = name.trim();
-    if (!trimmed) return;
-    const next: AuthUser = { role, name: trimmed };
-    setUser(next);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  const logout = useCallback(() => {
-    setUser(null);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  // Zustand is global; this is just a semantic wrapper for the app tree.
+  return children;
 }
 
-export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-  return ctx;
+export function useAuth() {
+  const user = useAuthStoreInternal((s) => s.user);
+  const hasHydrated = useAuthStoreInternal((s) => s.hasHydrated);
+  const login = useAuthStoreInternal((s) => s.login);
+  const logout = useAuthStoreInternal((s) => s.logout);
+
+  return {
+    user,
+    isLoading: !hasHydrated,
+    login,
+    logout,
+  };
 }

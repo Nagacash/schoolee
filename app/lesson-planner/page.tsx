@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -28,7 +28,7 @@ import { Slider } from "@/components/ui/slider";
 import { LessonPlan } from "@/components/lesson-plan";
 import type { LessonPlanResult } from "@/lib/gemini";
 import { Loader2, BookOpen } from "lucide-react";
-import { getTeacherClasses, type TeacherClass } from "@/lib/classes";
+import { useClassesStore, type TeacherClass } from "@/lib/classes";
 
 const schema = z.object({
   thema: z.string().min(1, "Thema angeben"),
@@ -43,12 +43,9 @@ export default function LessonPlannerPage() {
   const [plan, setPlan] = useState<LessonPlanResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [classes, setClasses] = useState<TeacherClass[]>([]);
+  const classes = useClassesStore((s) => s.teacherClasses);
+  const setTeacherClasses = useClassesStore((s) => s.setTeacherClasses);
   const [selectedClass, setSelectedClass] = useState<TeacherClass | null>(null);
-
-  useEffect(() => {
-    setClasses(getTeacherClasses());
-  }, []);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -91,6 +88,27 @@ export default function LessonPlannerPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Request failed");
       setPlan(data as LessonPlanResult);
+
+      // Wenn eine Klasse verknüpft ist, Plan als Aufgabe an diese Klasse anhängen
+      if (selectedClass) {
+        const lessonTitle = values.thema || "Stundenplan";
+        const description = `Plan für Klasse ${values.klasse} in ${values.fach}`;
+        const lesson = {
+          id: crypto.randomUUID(),
+          title: lessonTitle,
+          description,
+          createdAt: new Date().toISOString(),
+        };
+        const updated = classes.map((cls) =>
+          cls.id === selectedClass.id
+            ? {
+                ...cls,
+                lessons: [...(cls.lessons ?? []), lesson],
+              }
+            : cls
+        );
+        setTeacherClasses(updated);
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Fehler beim Erstellen des Plans");
     } finally {

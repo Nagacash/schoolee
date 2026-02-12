@@ -137,11 +137,11 @@ const featuresLehrer = [
       "Thema, Klasse, Fach & Zeit – die KI zaubert deinen kompletten Stundenplan mit Phasen, Materialien und Hausaufgaben. In Sekunden statt Stunden.",
     href: "/lesson-planner",
     icon: BookOpen,
-    colorClass: "text-primary",
-    bgClass: "bg-primary/15",
-    borderHover: "hover:border-primary/40",
-    glowClass: "hover:shadow-[0_8px_40px_-8px_oklch(0.5_0.14_230/0.3)]",
-    glowColor: "oklch(0.5 0.14 230 / 0.12)",
+    colorClass: "text-neutral-900 dark:text-neutral-50",
+    bgClass: "bg-neutral-900/5 dark:bg-neutral-50/5",
+    borderHover: "hover:border-neutral-900/15 dark:hover:border-neutral-50/20",
+    glowClass: "",
+    glowColor: "",
     gridClass: "md:col-span-1 md:row-span-2",
     large: true,
     tags: ["KI-generiert", "Export-ready"],
@@ -152,11 +152,11 @@ const featuresLehrer = [
       "CSV hochladen → KI analysiert: Schwächen erkennen, Empfehlungen erhalten und coole Charts generieren.",
     href: "/insights",
     icon: BarChart3,
-    colorClass: "text-chart-2",
-    bgClass: "bg-chart-2/15",
-    borderHover: "hover:border-chart-2/40",
-    glowClass: "hover:shadow-[0_8px_40px_-8px_oklch(0.55_0.14_165/0.3)]",
-    glowColor: "oklch(0.55 0.14 165 / 0.12)",
+    colorClass: "text-neutral-900 dark:text-neutral-50",
+    bgClass: "bg-neutral-900/5 dark:bg-neutral-50/5",
+    borderHover: "hover:border-neutral-900/15 dark:hover:border-neutral-50/20",
+    glowClass: "",
+    glowColor: "",
     gridClass: "md:col-span-1",
     large: false,
     tags: ["Echtzeit", "CSV-Import"],
@@ -167,11 +167,11 @@ const featuresLehrer = [
       "Quiz, Ideen, Lösungen – chatte mit der KI wie mit einem Freund. Immer bereit zu helfen.",
     href: "/magic-chat",
     icon: MessageSquare,
-    colorClass: "text-chart-3",
-    bgClass: "bg-chart-3/15",
-    borderHover: "hover:border-chart-3/40",
-    glowClass: "hover:shadow-[0_8px_40px_-8px_oklch(0.65_0.16_45/0.3)]",
-    glowColor: "oklch(0.65 0.16 45 / 0.12)",
+    colorClass: "text-neutral-900 dark:text-neutral-50",
+    bgClass: "bg-neutral-900/5 dark:bg-neutral-50/5",
+    borderHover: "hover:border-neutral-900/15 dark:hover:border-neutral-50/20",
+    glowClass: "",
+    glowColor: "",
     gridClass: "md:col-span-1",
     large: false,
     tags: ["24/7", "Multilingual"],
@@ -185,11 +185,11 @@ const featuresSchüler = [
       "Deine Themen von der Lehrerin oder dem Lehrer – oder eigene Themen. Starte den Chat und lern mit der KI.",
     href: "/lernen",
     icon: BookMarked,
-    colorClass: "text-primary",
-    bgClass: "bg-primary/15",
-    borderHover: "hover:border-primary/40",
-    glowClass: "hover:shadow-[0_8px_40px_-8px_oklch(0.5_0.14_230/0.3)]",
-    glowColor: "oklch(0.5 0.14 230 / 0.12)",
+    colorClass: "text-neutral-900 dark:text-neutral-50",
+    bgClass: "bg-neutral-900/5 dark:bg-neutral-50/5",
+    borderHover: "hover:border-neutral-900/15 dark:hover:border-neutral-50/20",
+    glowClass: "",
+    glowColor: "",
     gridClass: "md:col-span-1 md:row-span-2",
     large: true,
     tags: ["Themen", "Link teilen"],
@@ -200,11 +200,11 @@ const featuresSchüler = [
       "Quiz, Ideen, Lösungen – chatte mit der KI wie mit einem Freund. Immer bereit zu helfen.",
     href: "/magic-chat",
     icon: MessageSquare,
-    colorClass: "text-chart-3",
-    bgClass: "bg-chart-3/15",
-    borderHover: "hover:border-chart-3/40",
-    glowClass: "hover:shadow-[0_8px_40px_-8px_oklch(0.65_0.16_45/0.3)]",
-    glowColor: "oklch(0.65 0.16 45 / 0.12)",
+    colorClass: "text-neutral-900 dark:text-neutral-50",
+    bgClass: "bg-neutral-900/5 dark:bg-neutral-50/5",
+    borderHover: "hover:border-neutral-900/15 dark:hover:border-neutral-50/20",
+    glowClass: "",
+    glowColor: "",
     gridClass: "md:col-span-1",
     large: false,
     tags: ["24/7", "Multilingual"],
@@ -308,27 +308,24 @@ export default function Home() {
           SECTION 1 — HERO
           ═══════════════════════════════════════════ */}
       <section
-        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-linear-to-b from-background via-background to-muted/60"
         onMouseMove={handleHeroMouse}
       >
-        {/* Animated gradient mesh background */}
+        {/* Minimal gradient backdrop */}
         <div
           className="pointer-events-none absolute inset-0 -z-20"
           aria-hidden="true"
           style={{
             backgroundImage: `
-              radial-gradient(ellipse 80% 60% at 20% 30%, oklch(0.6 0.12 230 / 0.18) 0%, transparent 60%),
-              radial-gradient(ellipse 70% 50% at 80% 20%, oklch(0.6 0.1 165 / 0.15) 0%, transparent 55%),
-              radial-gradient(ellipse 60% 40% at 50% 80%, oklch(0.65 0.08 45 / 0.12) 0%, transparent 50%),
-              radial-gradient(ellipse 90% 70% at 60% 50%, oklch(0.55 0.06 280 / 0.08) 0%, transparent 60%)
+              radial-gradient(ellipse 90% 70% at 50% 0%, oklch(0.18 0.02 250 / 0.9) 0%, transparent 55%),
+              radial-gradient(ellipse 80% 60% at 50% 100%, oklch(0.96 0.02 250 / 1) 0%, transparent 60%)
             `,
-            animation: "gradient-shift 15s ease-in-out infinite",
           }}
         />
 
-        {/* Mouse-follow spotlight */}
+        {/* Subtle mouse-follow spotlight */}
         <motion.div
-          className="pointer-events-none absolute -z-10 h-[500px] w-[500px] rounded-full opacity-40"
+          className="pointer-events-none absolute -z-10 h-[520px] w-[520px] rounded-full opacity-40"
           aria-hidden="true"
           style={{
             x: springX,
@@ -336,138 +333,153 @@ export default function Home() {
             translateX: "-50%",
             translateY: "-50%",
             background:
-              "radial-gradient(circle, oklch(0.6 0.12 230 / 0.15) 0%, transparent 70%)",
+              "radial-gradient(circle, oklch(0.8 0.03 250 / 0.18) 0%, transparent 70%)",
           }}
         />
 
-        {/* Floating glassmorphic orbs */}
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
-          <div
-            className="absolute top-[12%] left-[8%] h-32 w-32 rounded-full bg-primary/8 backdrop-blur-xl border border-white/10 dark:border-white/5"
-            style={{ animation: "float-glass 22s ease-in-out infinite" }}
-          />
-          <div
-            className="absolute top-[20%] right-[12%] h-20 w-20 rounded-2xl bg-chart-2/10 backdrop-blur-lg border border-white/8 dark:border-white/4"
-            style={{ animation: "float-glass 18s ease-in-out infinite 3s" }}
-          />
-          <div
-            className="absolute bottom-[25%] left-[15%] h-24 w-24 rounded-full bg-chart-3/8 backdrop-blur-xl border border-white/10 dark:border-white/5"
-            style={{ animation: "float-glass 25s ease-in-out infinite 6s" }}
-          />
-          <div
-            className="absolute top-[55%] right-[20%] h-16 w-16 rounded-xl bg-primary/6 backdrop-blur-lg border border-white/8 dark:border-white/4"
-            style={{ animation: "float-glass 20s ease-in-out infinite 9s" }}
-          />
-          <div
-            className="absolute bottom-[15%] right-[30%] h-28 w-28 rounded-full bg-chart-4/6 backdrop-blur-xl border border-white/10 dark:border-white/5"
-            style={{ animation: "float-glass 24s ease-in-out infinite 12s" }}
-          />
-        </div>
-
         {/* Hero content */}
         <motion.div
-          className="relative container mx-auto max-w-5xl text-center px-4"
+          className="relative container mx-auto max-w-6xl px-4 md:px-6 lg:px-8"
           variants={heroContainer}
           initial="hidden"
           animate="show"
         >
-          {/* Badge */}
-          <motion.div variants={heroItem} className="flex justify-center mb-8">
-            <span className="inline-flex items-center gap-2 rounded-full bg-card/60 backdrop-blur-xl text-primary px-5 py-2.5 text-sm font-semibold border border-white/15 dark:border-white/10 shadow-lg">
-              <Sparkles className="h-4 w-4" />
-              Für Lehrer & Schüler
-            </span>
-          </motion.div>
-
-          {/* Headline – word-by-word stagger */}
-          <motion.h1
-            className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl text-foreground leading-[0.95]"
-            style={{ perspective: "800px" }}
-          >
-            <motion.span className="inline-flex gap-[0.3em] justify-center flex-wrap">
-              {["Deine", "coole"].map((word, i) => (
-                <motion.span
-                  key={word}
-                  variants={wordReveal}
-                  initial="hidden"
-                  animate="show"
-                  transition={{ delay: 0.4 + i * 0.12 }}
-                  className="inline-block"
-                  style={{ transformOrigin: "center bottom" }}
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </motion.span>
-            <motion.span
-              className="block mt-2 bg-gradient-to-r from-primary via-chart-2 to-primary bg-clip-text text-transparent"
-              initial={{ clipPath: "inset(0 100% 0 0)" }}
-              animate={{ clipPath: "inset(0 0% 0 0)" }}
-              transition={{ duration: 1, delay: 0.7, ease: smoothEase as unknown as [number, number, number, number] }}
-              style={{
-                textShadow: "0 0 60px oklch(0.5 0.14 230 / 0.25)",
-              }}
-            >
-              Schul-App
-            </motion.span>
-          </motion.h1>
-
-          {/* Subheadline */}
-          <motion.p
-            variants={heroItem}
-            className="mt-8 text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-medium"
-          >
-            Stunden planen, Noten verstehen, Magic Chat –{" "}
-            <span className="text-foreground">mit KI macht Schule Spaß.</span>
-          </motion.p>
-
-          {/* CTAs */}
-          <motion.div
-            variants={heroItem}
-            className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <Link href={isSchüler ? "/lernen" : "/lesson-planner"}>
-              <motion.span
-                className="group inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary text-primary-foreground px-8 py-4 text-base font-semibold shadow-lg transition-all duration-300 hover:shadow-[0_0_30px_-5px_oklch(0.5_0.14_230/0.5)]"
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.98 }}
-                style={{ animation: "glow-pulse 3s ease-in-out infinite" }}
-              >
-                {isSchüler ? "Zum Lernen" : "Jetzt Starten"}
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </motion.span>
-            </Link>
-            <a href="#features">
-              <motion.span
-                className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-transparent text-foreground px-8 py-4 text-base font-semibold border border-border hover:border-primary/40 transition-all duration-300 hover:bg-primary/5"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Mehr erfahren
-              </motion.span>
-            </a>
-          </motion.div>
-
-          {/* Trusted-by strip */}
-          <motion.div
-            variants={heroItem}
-            className="mt-16 flex flex-col items-center gap-4"
-          >
-            <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground/50">
-              Vertraut von
-            </span>
-            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8">
-              {trustedBy.map((name) => (
-                <span
-                  key={name}
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground/40 select-none"
-                >
-                  <GraduationCap className="h-4 w-4" />
-                  {name}
+          <div className="grid gap-10 lg:gap-16 lg:grid-cols-[minmax(0,3fr)_minmax(0,2.2fr)] items-center">
+            {/* Text column */}
+            <div className="text-left">
+              {/* Badge */}
+              <motion.div variants={heroItem} className="mb-6">
+                <span className="inline-flex items-center gap-2 rounded-full bg-neutral-900/70 text-neutral-100 px-4 py-1.5 text-xs font-semibold border border-white/10 shadow-sm">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Naggy · KI-Schulplattform
                 </span>
-              ))}
+              </motion.div>
+
+              {/* Headline */}
+              <motion.h1
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight text-neutral-50"
+                style={{ letterSpacing: "-0.05em" }}
+                variants={heroItem}
+              >
+                Unterricht,
+                <br />
+                aber{" "}
+                <span className="text-neutral-300">
+                  <span className="border-b border-neutral-500 pb-1">
+                    in ruhig stark.
+                  </span>
+                </span>
+              </motion.h1>
+
+              {/* Subheadline */}
+              <motion.p
+                variants={heroItem}
+                className="mt-7 text-base sm:text-lg md:text-xl text-neutral-300 max-w-xl leading-relaxed"
+              >
+                Naggy nimmt dir Routine ab: Stundenpläne, Leistungsdaten, Erklärungen für Schüler –
+                alles in einer klaren Oberfläche, die sich wie ein modernes Produkt anfühlt, nicht
+                wie Schulsoftware.
+              </motion.p>
+
+              {/* CTAs + microcopy */}
+              <motion.div
+                variants={heroItem}
+                className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-4"
+              >
+                <Link href={isSchüler ? "/lernen" : "/lesson-planner"}>
+                  <motion.span
+                    className="group inline-flex cursor-pointer items-center gap-2 rounded-full bg-neutral-50 text-neutral-950 px-7 py-3.5 text-sm font-semibold tracking-wide shadow-sm transition-all duration-200 hover:bg-white hover:shadow-md"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    {isSchüler ? "Jetzt lernen" : "Lesson Planner öffnen"}
+                    <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                  </motion.span>
+                </Link>
+                <a
+                  href="#features"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-neutral-300 hover:text-white transition-colors cursor-pointer"
+                >
+                  Mehr sehen
+                  <ChevronDown className="h-4 w-4" />
+                </a>
+              </motion.div>
+
+              {/* Stats row */}
+              <motion.div
+                variants={heroItem}
+                className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-5 text-sm text-neutral-300"
+              >
+                {stats.slice(0, 3).map((stat) => (
+                  <div key={stat.label} className="space-y-1">
+                    <div className="text-lg font-semibold text-neutral-50">
+                      <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+                    </div>
+                    <div className="text-[11px] uppercase tracking-[0.18em] text-neutral-500">
+                      {stat.label}
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
             </div>
-          </motion.div>
+
+            {/* Visual column */}
+            <motion.div
+              variants={heroItem}
+              className="relative h-[320px] sm:h-[360px] md:h-[420px] rounded-3xl border border-white/8 bg-linear-to-b from-neutral-900/90 via-neutral-950 to-neutral-900/90 overflow-hidden shadow-[0_28px_80px_-40px_rgba(0,0,0,0.8)]"
+            >
+              {/* Subtle top tag */}
+              <div className="absolute top-5 left-5 flex items-center gap-2 text-[11px] text-neutral-300/80">
+                <span className="h-1 w-1 rounded-full bg-emerald-400" />
+                Live mit Gemini 2.5
+              </div>
+
+              {/* Layout preview stripes */}
+              <div className="absolute inset-x-6 top-16 space-y-3">
+                <div className="h-9 rounded-xl bg-neutral-800/80 border border-white/5 flex items-center px-4 gap-3">
+                  <div className="h-6 w-6 rounded-lg bg-neutral-700/80" />
+                  <div className="h-1.5 w-24 rounded-full bg-neutral-600/90" />
+                  <div className="h-1.5 w-16 rounded-full bg-neutral-700/90" />
+                </div>
+                <div className="h-9 rounded-xl bg-neutral-900/80 border border-white/5 flex items-center px-4 gap-3">
+                  <div className="h-6 w-6 rounded-lg bg-neutral-800/90" />
+                  <div className="h-1.5 w-28 rounded-full bg-neutral-600/90" />
+                </div>
+              </div>
+
+              {/* Split panels */}
+              <div className="absolute inset-x-6 bottom-7 flex flex-col md:flex-row gap-3">
+                <div className="flex-1 rounded-2xl bg-neutral-900/90 border border-white/6 p-4 flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-xs text-neutral-300 mb-3">
+                    <span>Lesson Planner</span>
+                    <span className="text-neutral-500">3 Phasen · 45 Min</span>
+                  </div>
+                  <div className="space-y-1.5 text-[11px] text-neutral-400">
+                    <div className="flex items-center justify-between">
+                      <span>Einstieg</span>
+                      <span>10 Min</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Erarbeitung</span>
+                      <span>25 Min</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Sicherung</span>
+                      <span>10 Min</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1 rounded-2xl bg-neutral-900/90 border border-white/6 p-4 flex flex-col gap-3">
+                  <div className="flex items-center justify-between text-xs text-neutral-300">
+                    <span>Magic Chat</span>
+                    <span className="text-neutral-500">Deutsch + Übersetzung</span>
+                  </div>
+                  <div className="h-16 rounded-xl bg-neutral-950/80 border border-white/5" />
+                  <div className="h-8 rounded-full bg-neutral-800/80 border border-white/5" />
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </motion.div>
 
         {/* Scroll indicator */}
@@ -479,10 +491,10 @@ export default function Home() {
         >
           <a
             href="#features"
-            className="flex flex-col items-center gap-2 text-muted-foreground/60 hover:text-muted-foreground transition-colors cursor-pointer"
+            className="flex flex-col items-center gap-1 text-[11px] text-neutral-400 hover:text-neutral-200 transition-colors cursor-pointer"
           >
-            <span className="text-xs font-medium tracking-widest uppercase">Entdecken</span>
-            <ChevronDown className="h-5 w-5 animate-bounce" />
+            <span className="tracking-[0.2em] uppercase">Scroll</span>
+            <ChevronDown className="h-4 w-4 animate-bounce" />
           </a>
         </motion.div>
       </section>
@@ -528,14 +540,8 @@ export default function Home() {
                     }}
                   >
                     <Card
-                      className={`relative h-full transition-all duration-500 cursor-pointer rounded-3xl overflow-hidden border border-white/10 dark:border-white/5 bg-card/80 backdrop-blur-xl ${feature.borderHover} ${feature.glowClass} p-0`}
+                      className={`relative h-full transition-all duration-300 cursor-pointer rounded-3xl overflow-hidden border border-neutral-200/70 dark:border-white/10 bg-neutral-50/70 dark:bg-neutral-900/60 backdrop-blur-xl ${feature.borderHover} p-0`}
                     >
-                      {/* Inner glow on hover */}
-                      <div
-                        className="pointer-events-none absolute top-0 left-0 w-48 h-48 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-3xl -z-0"
-                        style={{ background: `radial-gradient(circle, ${feature.glowColor}, transparent 70%)` }}
-                      />
-
                       <div
                         className={`relative z-10 flex ${feature.large ? "flex-col justify-between h-full" : "flex-col"} p-8`}
                       >

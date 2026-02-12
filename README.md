@@ -54,9 +54,9 @@ To create the workflow via **n8n MCP**:
 
 1. Run n8n (e.g. Docker or cloud) and get your **API URL** and **API key**.
 2. Set env vars for the MCP: `N8N_API_URL`, `N8N_API_KEY`.
-3. Use the MCP tool `n8n_create_workflow` to create the “Naggy Lesson Plan – Gemini” workflow (Webhook → HTTP Request to Gemini API → Respond to Webhook).
+3. Use the MCP tool `n8n_create_workflow` to create the “Naga Codex Lesson Plan – Gemini” workflow (Webhook → HTTP Request to Gemini API → Respond to Webhook).
 
-A workflow **"Naggy Lesson Plan – Gemini"** was created via MCP (Webhook → Build Prompt → Call Gemini → Respond to Webhook). Set `GEMINI_API_KEY` in n8n; after activation, POST to the webhook with body `{ "thema", "klasse", "fach", "zeit" }` and parse `candidates[0].content.parts[0].text` for the lesson plan JSON.
+A workflow **"Naga Codex Lesson Plan – Gemini"** was created via MCP (Webhook → Build Prompt → Call Gemini → Respond to Webhook). Set `GEMINI_API_KEY` in n8n; after activation, POST to the webhook with body `{ "thema", "klasse", "fach", "zeit" }` and parse `candidates[0].content.parts[0].text` for the lesson plan JSON.
 
 ## Scripts
 

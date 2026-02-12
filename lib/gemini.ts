@@ -96,13 +96,60 @@ export interface ChatMessage {
   content: string;
 }
 
-const SYSTEM_INSTRUCTION =
-  "Du bist paddy Magic Chat für Lehrer. Antworte prägnant, mit Struktur (z.B. Quiz-Fragen + Lösungen). Nutze ggf. Emojis wie 📄 für Dokumente.";
+function buildSystemInstruction(targetLang?: string): string {
+  const base =
+    "Du bist Naggy Magic Chat für Schule (Lehrer und Schüler). Antworte prägnant, klar strukturiert (z.B. Überschriften, Listen, Quiz-Fragen + Lösungen). Nutze ggf. Emojis wie 📄 für Dokumente oder 🌿 für Biologie.";
 
-export async function chat(messages: ChatMessage[]): Promise<string> {
+  if (!targetLang) return base;
+
+  switch (targetLang) {
+    case "en":
+      return (
+        base +
+        "\n\nSehr wichtig: Antworte immer in einfacher, klarer deutscher Sprache. Nutze Überschriften und Listen, wenn es passt."
+      );
+    case "ar":
+      return (
+        base +
+        "\n\nSehr wichtig: Antworte immer in einfacher, klarer deutscher Sprache. Nutze Überschriften und Listen, wenn es passt."
+      );
+    case "tr":
+      return (
+        base +
+        "\n\nSehr wichtig: Antworte immer in einfacher, klarer deutscher Sprache. Nutze Überschriften und Listen, wenn es passt."
+      );
+    case "uk":
+      return (
+        base +
+        "\n\nSehr wichtig: Antworte immer in einfacher, klarer deutscher Sprache. Nutze Überschriften und Listen, wenn es passt."
+      );
+    default:
+      return base;
+  }
+}
+
+function getLanguageHeading(code?: string): string {
+  switch (code) {
+    case "en":
+      return "English";
+    case "ar":
+      return "العربية";
+    case "tr":
+      return "Türkçe";
+    case "uk":
+      return "Українська";
+    default:
+      return "Übersetzung";
+  }
+}
+
+export async function chat(
+  messages: ChatMessage[],
+  targetLang?: string
+): Promise<string> {
   const model = genAI.getGenerativeModel({
     model: MODEL,
-    systemInstruction: SYSTEM_INSTRUCTION,
+    systemInstruction: buildSystemInstruction(targetLang),
   });
 
   const contents = messages.map((m) => ({
@@ -114,15 +161,38 @@ export async function chat(messages: ChatMessage[]): Promise<string> {
   const last = messages[messages.length - 1];
   if (last.role !== "user") throw new Error("Last message must be user");
   const result = await chat.sendMessage(last.content);
-  return result.response.text();
+  const germanText = result.response.text().trim();
+
+  // Wenn keine Zielsprache gewählt ist, nur Deutsch zurückgeben.
+  if (!targetLang) return germanText;
+
+  const heading = getLanguageHeading(targetLang);
+
+  // Zweiten Aufruf für die Übersetzung in die Zielsprache.
+  const translateModel = genAI.getGenerativeModel({ model: MODEL });
+  const translatePrompt = `Übersetze den folgenden Text in ${heading} in einfacher Sprache. Erkläre alles vollständig, aber fasse dich möglichst klar und verständlich. Lasse keine Inhalte weg.\n\nText (Deutsch):\n${germanText}`;
+  const translateResult = await translateModel.generateContent(translatePrompt);
+  const translated = translateResult.response.text().trim();
+
+  // Kombiniere Deutsch + Übersetzung in einem strukturierten Markdown-Format.
+  return `## Deutsch\n\n${germanText}\n\n---\n\n## ${heading}\n\n${translated}`;
 }
 
 export async function* chatWithStream(
-  messages: ChatMessage[]
+  messages: ChatMessage[],
+  targetLang?: string
 ): AsyncGenerator<string, void, unknown> {
+  // Für Fälle mit Zielsprache nutzen wir die kombinierte Antwort aus `chat`
+  // und streamen sie als einen Block (einfach, aber robust).
+  if (targetLang) {
+    const full = await chat(messages, targetLang);
+    yield full;
+    return;
+  }
+
   const model = genAI.getGenerativeModel({
     model: MODEL,
-    systemInstruction: SYSTEM_INSTRUCTION,
+    systemInstruction: buildSystemInstruction(targetLang),
   });
 
   const history = messages.slice(0, -1).map((m) => ({

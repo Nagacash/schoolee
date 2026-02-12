@@ -6,13 +6,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { MarkdownContent } from "@/components/markdown-content";
-import { FileDown, BookOpen } from "lucide-react";
+import { FileDown, BookOpen, Copy } from "lucide-react";
+import { GLOSSARY_LANGUAGES, type GlossaryLanguage } from "@/lib/term-glossary";
+import { useChatStore } from "@/lib/chat-store";
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
 }
+
+const CHAT_SUBTITLE_TRANSLATIONS: Record<GlossaryLanguage, string> = {
+  en: "Ask questions, get explanations or quizzes – the AI answers in simple German.",
+  ar: "اِسأل أسئلة، واحصل على شروح أو اختبارات – الذكاء الاصطناعي يجيب بالألمانية المبسّطة.",
+  tr: "Sorular sor, açıklamalar veya testler iste – yapay zeka sade Almanca ile cevap verir.",
+  uk: "Став запитання, проси пояснення чи вікторини – ШІ відповідає простою німецькою.",
+};
 
 export default function MagicChatPage() {
   const searchParams = useSearchParams();
@@ -23,6 +32,13 @@ export default function MagicChatPage() {
   const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const printContentRef = useRef<HTMLDivElement>(null);
+  const [chatLang, setChatLang] = useState<GlossaryLanguage>("en");
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const sessions = useChatStore((s) => s.sessions);
+  const upsertSession = useChatStore((s) => s.upsertSession);
+  const deleteSession = useChatStore((s) => s.deleteSession);
+  const clearSessions = useChatStore((s) => s.clearSessions);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -53,6 +69,7 @@ export default function MagicChatPage() {
     setLoading(true);
 
     try {
+      const useStream = !chatLang;
       const history = [...messages, userMsg].map((m) => ({
         role: m.role,
         content: m.content,
@@ -60,26 +77,59 @@ export default function MagicChatPage() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history, stream: true }),
+        body: JSON.stringify({ messages: history, stream: useStream, language: chatLang }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || "Request failed");
       }
-      const reader = res.body?.getReader();
-      const decoder = new TextDecoder();
-      if (!reader) throw new Error("No response body");
+      if (useStream) {
+        const reader = res.body?.getReader();
+        const decoder = new TextDecoder();
+        if (!reader) throw new Error("No response body");
 
-      let full = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        full += decoder.decode(value, { stream: true });
+        let full = "";
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          full += decoder.decode(value, { stream: true });
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantId ? { ...m, content: full } : m
+            )
+          );
+        }
+      } else {
+        const data = await res.json();
+        const content = typeof data?.text === "string" ? data.text : "";
         setMessages((prev) =>
           prev.map((m) =>
-            m.id === assistantId ? { ...m, content: full } : m
+            m.id === assistantId ? { ...m, content } : m
           )
         );
+
+        // Verlauf speichern oder aktualisieren
+        const allMessages = [...messages, userMsg, { id: assistantId, role: "assistant", content }];
+        const firstUser = allMessages.find((m) => m.role === "user");
+        const titleFromTopic = topicFromUrl ? `Thema: ${topicFromUrl}` : null;
+        const titleFromText = firstUser?.content
+          ? firstUser.content.slice(0, 80) + (firstUser.content.length > 80 ? "…" : "")
+          : "Chat";
+        const id = sessionId ?? crypto.randomUUID();
+        const createdAt =
+          sessionId && sessions.find((s) => s.id === sessionId)?.createdAt
+            ? sessions.find((s) => s.id === sessionId)!.createdAt
+            : new Date().toISOString();
+
+        upsertSession({
+          id,
+          createdAt,
+          title: titleFromTopic ?? titleFromText,
+          topic: topicFromUrl,
+          language: chatLang,
+          messages: allMessages.map((m) => ({ role: m.role, content: m.content })),
+        });
+        if (!sessionId) setSessionId(id);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Fehler");
@@ -120,6 +170,20 @@ export default function MagicChatPage() {
     setTimeout(() => { w.print(); w.close(); }, 300);
   }
 
+  async function handleCopyLast() {
+    const last = [...messages].reverse().find((m) => m.role === "assistant" && m.content);
+    if (!last) return;
+    try {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        await navigator.clipboard.writeText(last.content);
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 1500);
+      }
+    } catch {
+      // ignore copy errors
+    }
+  }
+
   const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant" && m.content);
 
   return (
@@ -130,6 +194,28 @@ export default function MagicChatPage() {
           <p className="text-muted-foreground mt-2 text-lg">
             Quiz, Ideen, Lösungen – chatte mit der KI. Antworten werden schön formatiert angezeigt.
           </p>
+          <div className="mt-3 space-y-1.5">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs">
+              <span className="text-muted-foreground">Sprache für Erklärung auswählen:</span>
+              {GLOSSARY_LANGUAGES.map((lang) => (
+                <button
+                  key={lang.code}
+                  type="button"
+                  onClick={() => setChatLang(lang.code)}
+                  className={`rounded-full px-3 py-1 border font-medium transition-colors ${
+                    chatLang === lang.code
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-muted text-foreground border-border hover:bg-muted/80"
+                  }`}
+                >
+                  {lang.label}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {CHAT_SUBTITLE_TRANSLATIONS[chatLang]}
+            </p>
+          </div>
         </div>
 
         {/* Hidden div to capture rendered markdown for print */}
@@ -222,7 +308,7 @@ export default function MagicChatPage() {
             </form>
 
             {lastAssistant && (
-              <div className="no-print px-4 pb-4">
+              <div className="no-print px-4 pb-4 flex flex-wrap items-center gap-3">
                 <Button
                   variant="outline"
                   size="sm"
@@ -232,11 +318,113 @@ export default function MagicChatPage() {
                   <FileDown className="h-4 w-4" />
                   Letzte Antwort drucken / PDF
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyLast}
+                  className="gap-2 rounded-xl"
+                >
+                  <Copy className="h-4 w-4" />
+                  {copied ? "Kopiert!" : "Text kopieren"}
+                </Button>
               </div>
             )}
           </CardContent>
         </Card>
 
+        {sessions.length > 0 && (
+          <section className="space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-sm font-semibold text-foreground">
+                Deine Chat-Verläufe
+              </h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => clearSessions()}
+                className="text-xs text-muted-foreground hover:text-destructive"
+              >
+                Verlauf löschen
+              </Button>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              {sessions.map((session) => {
+                const date = new Date(session.createdAt);
+                const dateLabel = isNaN(date.getTime())
+                  ? ""
+                  : date.toLocaleDateString("de-DE", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "2-digit",
+                    });
+                const snippet =
+                  session.messages.find((m) => m.role === "assistant")?.content.slice(0, 80) ??
+                  "";
+                return (
+                  <button
+                    key={session.id}
+                    type="button"
+                    onClick={() => {
+                      setMessages(
+                        session.messages.map((m, idx) => ({
+                          id: `${session.id}-${idx}`,
+                          role: m.role,
+                          content: m.content,
+                        }))
+                      );
+                      setSessionId(session.id);
+                      if (session.language) {
+                        setChatLang(session.language as GlossaryLanguage);
+                      }
+                      setError(null);
+                      setInput("");
+                    }}
+                    className="group text-left rounded-xl border border-border bg-card/80 px-3.5 py-3 shadow-sm hover:border-primary/50 hover:shadow-md transition-all duration-150 flex flex-col gap-1.5"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-xs font-semibold text-foreground line-clamp-1">
+                        {session.title}
+                      </p>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteSession(session.id);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            deleteSession(session.id);
+                          }
+                        }}
+                        className="text-[11px] text-muted-foreground hover:text-destructive cursor-pointer"
+                      >
+                        Löschen
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[11px] text-muted-foreground">
+                        {dateLabel}
+                      </span>
+                      {session.language && (
+                        <span className="text-[11px] rounded-full border border-border px-2 py-0.5 text-muted-foreground">
+                          {session.language.toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+                    {snippet && (
+                      <p className="text-[11px] text-muted-foreground line-clamp-2">
+                        {snippet}
+                      </p>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

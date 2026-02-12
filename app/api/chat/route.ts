@@ -6,9 +6,10 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { messages, stream: useStream } = body as {
+    const { messages, stream: useStream, language } = body as {
       messages?: { role: string; content: string }[];
       stream?: boolean;
+      language?: string;
     };
 
     if (!Array.isArray(messages) || messages.length === 0) {
@@ -38,12 +39,15 @@ export async function POST(request: Request) {
       );
     }
 
-    if (useStream !== false) {
+    // Nur ohne Sprache im Streaming-Modus arbeiten.
+    // Wenn eine Sprache für Übersetzung gesetzt ist, nutzen wir den einfachen JSON-Weg,
+    // damit Fehler nicht den Stream hart abbrechen.
+    if (useStream !== false && !language) {
       const encoder = new TextEncoder();
       const readable = new ReadableStream({
         async start(controller) {
           try {
-            for await (const chunk of chatWithStream(normalized)) {
+            for await (const chunk of chatWithStream(normalized, language)) {
               controller.enqueue(encoder.encode(chunk));
             }
             controller.close();
@@ -60,7 +64,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const text = await chat(normalized);
+    const text = await chat(normalized, language);
     return new Response(JSON.stringify({ text }), {
       headers: { "Content-Type": "application/json" },
     });
