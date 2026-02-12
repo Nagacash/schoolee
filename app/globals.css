@@ -157,7 +157,7 @@
     }
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-x-hidden;
     background-image:
       radial-gradient(ellipse 140% 90% at 15% 5%, var(--aurora-1) 0%, transparent 50%),
       radial-gradient(ellipse 100% 70% at 85% 15%, var(--aurora-2) 0%, transparent 50%),
