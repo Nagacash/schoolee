@@ -1,4 +1,4 @@
-
+#NAGA CODEX
 
 Interview-ready Next.js 15 demo with **Lesson Planner**, **Insights** (CSV + Gemini), and **Magic Chat** – all using **Gemini 2.5 Flash** (free tier). Deploy to Vercel in minutes.
 
@@ -27,7 +27,9 @@ pnpm install
 
 # Copy env and add your Gemini API key (https://aistudio.google.com/apikey)
 cp .env.local.example .env.local
-# Edit .env.local: GEMINI_API_KEY=your_key
+# Edit .env.local:
+# GEMINI_API_KEY=your_key
+# (optional) NEXT_PUBLIC_APP_URL=http://localhost:3000  # or your deployed domain
 
 # Run dev server
 pnpm dev
@@ -39,7 +41,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 1. Push the repo to GitHub (or connect your Git provider).
 2. In [Vercel](https://vercel.com/new), import the project.
-3. Add **Environment Variable:** `GEMINI_API_KEY` = your key.
+3. Add **Environment Variables:**
+   - `GEMINI_API_KEY` = your key
+   - (optional) `NEXT_PUBLIC_APP_URL` = e.g. `https://schoolee-gamma.vercel.app` or your final domain
 4. Deploy.
 
 ## Optional: n8n workflow (interview pitch)
@@ -50,9 +54,9 @@ To create the workflow via **n8n MCP**:
 
 1. Run n8n (e.g. Docker or cloud) and get your **API URL** and **API key**.
 2. Set env vars for the MCP: `N8N_API_URL`, `N8N_API_KEY`.
-3. Use the MCP tool `n8n_create_workflow` to create the “Paddy Lesson Plan – Gemini” workflow (Webhook → HTTP Request to Gemini API → Respond to Webhook).
+3. Use the MCP tool `n8n_create_workflow` to create the “Naggy Lesson Plan – Gemini” workflow (Webhook → HTTP Request to Gemini API → Respond to Webhook).
 
-A workflow **"Paddy Lesson Plan – Gemini"** was created via MCP (Webhook → Build Prompt → Call Gemini → Respond to Webhook). Set `GEMINI_API_KEY` in n8n; after activation, POST to the webhook with body `{ "thema", "klasse", "fach", "zeit" }` and parse `candidates[0].content.parts[0].text` for the lesson plan JSON.
+A workflow **"Naggy Lesson Plan – Gemini"** was created via MCP (Webhook → Build Prompt → Call Gemini → Respond to Webhook). Set `GEMINI_API_KEY` in n8n; after activation, POST to the webhook with body `{ "thema", "klasse", "fach", "zeit" }` and parse `candidates[0].content.parts[0].text` for the lesson plan JSON.
 
 ## Scripts
 
