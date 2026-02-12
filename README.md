@@ -1,4 +1,4 @@
-# paddy-demo – EdTech RAG App
+
 
 Interview-ready Next.js 15 demo with **Lesson Planner**, **Insights** (CSV + Gemini), and **Magic Chat** – all using **Gemini 2.5 Flash** (free tier). Deploy to Vercel in minutes.
 
