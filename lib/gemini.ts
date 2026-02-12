@@ -157,10 +157,10 @@ export async function chat(
     parts: [{ text: m.content }],
   }));
 
-  const chat = model.startChat({ history: contents.slice(0, -1) });
+  const chatSession = model.startChat({ history: contents.slice(0, -1) });
   const last = messages[messages.length - 1];
   if (last.role !== "user") throw new Error("Last message must be user");
-  const result = await chat.sendMessage(last.content);
+  const result = await chatSession.sendMessage(last.content);
   const germanText = result.response.text().trim();
 
   // Wenn keine Zielsprache gewählt ist, nur Deutsch zurückgeben.
@@ -202,8 +202,8 @@ export async function* chatWithStream(
   const last = messages[messages.length - 1];
   if (last.role !== "user") throw new Error("Last message must be user");
 
-  const chat = model.startChat({ history });
-  const result = await chat.sendMessageStream(last.content);
+  const chatSession = model.startChat({ history });
+  const result = await chatSession.sendMessageStream(last.content);
 
   for await (const chunk of result.stream) {
     const text = chunk.text();

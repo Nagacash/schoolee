@@ -1,5 +1,7 @@
 #NAGA CODEX
 
+p> Hinweis: Das Repository-Verzeichnis heißt weiterhin `paddy-demo`, auch wenn das Produkt im UI und in dieser Doku **Naga Codex** heißt. Du kannst den Ordner bei Bedarf umbenennen, die Beispiele gehen jedoch von `paddy-demo` aus.
+
 Interview-ready Next.js 15 demo with **Lesson Planner**, **Insights** (CSV + Gemini), and **Magic Chat** – all using **Gemini 2.5 Flash** (free tier). Deploy to Vercel in minutes.
 
 ## Tech stack (100% free)

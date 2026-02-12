@@ -127,7 +127,7 @@ export default function MagicChatPage() {
           title: titleFromTopic ?? titleFromText,
           topic: topicFromUrl,
           language: chatLang,
-          messages: allMessages.map((m) => ({ role: m.role, content: m.content })),
+          messages: allMessages.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
         });
         if (!sessionId) setSessionId(id);
       }
